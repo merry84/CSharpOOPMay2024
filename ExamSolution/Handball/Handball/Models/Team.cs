@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using System.Xml.Linq;
 
 namespace Handball.Models
-{
+{//88/150
     public class Team : ITeam
     {
         private string name;
@@ -69,23 +69,20 @@ namespace Handball.Models
         }
         public override string ToString()
         {
-            /*"Team: {Name} Points: {PointsEarned}
-            --Overall rating: {OverallRating}
-            --Players: {name1}, {name2}…/none" 
-            NOTE: Do not use "\r\n" for a new line. 
-            */
             var sb = new StringBuilder();
-            sb.AppendLine($"Team: {Name} Points: {PointsEarned}");
+
+            sb.AppendLine($"Team: {this.Name} Points: {this.PointsEarned}");
             sb.AppendLine($"--Overall rating: {OverallRating}");
             sb.Append($"--Players: ");
-            foreach (var player in players)
+
+            if (this.Players.Any())
             {
-                if(players.Count== 0)
-                {
-                    sb.Append("none");
-                }
-                else
-                    sb.Append($"{string.Join(", ", players.Select(x => x.Name))}");
+                var names = this.Players.Select(p => p.Name);
+                sb.Append(string.Join(", ", names));
+            }
+            else
+            {
+                sb.Append("none");
             }
 
             return sb.ToString().TrimEnd();

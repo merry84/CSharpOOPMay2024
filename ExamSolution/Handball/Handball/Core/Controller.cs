@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 
 namespace Handball.Core
 {
+    //88/150
     public class Controller : IController
     {
         private IRepository<IPlayer> players;
@@ -23,21 +24,13 @@ namespace Handball.Core
         }
         public string LeagueStandings()
         {
-           /*Returns information about each team from the TeamRepository. 
-            * Arrange the teams by PointsEarned - descending, then by OverallRating – descending, then by teamName - alphabetically.
-            * In order to receive the correct output, use the ToString() method of each team:
-            "***League Standings***
-            {team1} 
-            {team2}
-            ...
-            {teamn}"
-            */
+           
            var team = teams.Models.OrderByDescending(x=>x.PointsEarned).ThenByDescending(x=>x.OverallRating).ThenBy(x=>x.Name);
            var sb = new StringBuilder();
             sb.AppendLine("***League Standings***");
-            foreach (var player in team)
+            foreach (var currteam in team)
             {
-                sb.AppendLine($"{player.ToString()}");
+                sb.AppendLine(currteam.ToString());
             }
             return sb.ToString().TrimEnd();
         }
@@ -135,15 +128,8 @@ namespace Handball.Core
         }
 
         public string PlayerStatistics(string teamName)
-        { /*Returns information about each player from the team with the given name
-           * (every name passed as a parameter will be a name of an existing team in the application). 
-           * Arrange the players by Rating - descending, then by Name - alphabetically.
-           * In order to receive the correct output, use the ToString() method of each player:
-            "***{teamName}***
-            {player1} 
-            {player2}            
-            {playern}"
-            */
+        { 
+           
             var sb = new StringBuilder();
             var team = teams.GetModel(teamName);
             var playersFiltred = team.Players.OrderByDescending(x=>x.Rating).ThenBy(x=>x.Name);
@@ -151,7 +137,7 @@ namespace Handball.Core
             sb.AppendLine($"***{teamName}***");
             foreach (var player in playersFiltred) 
             {
-                sb.AppendLine($"{player.ToString()}");
+                sb.AppendLine(player.ToString());
             }
             return sb.ToString().TrimEnd();
         }
