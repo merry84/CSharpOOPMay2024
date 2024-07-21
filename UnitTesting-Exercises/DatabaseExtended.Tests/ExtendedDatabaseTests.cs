@@ -29,6 +29,7 @@ namespace DatabaseExtended.Tests
         {
             var expectResult = 7;
             Assert.AreEqual(expectResult, database.Count);
+            Assert.That(database.Count,Is.EqualTo(7));
         }
         [Test]
         public void AddMethodWorkCorrectly()
@@ -66,6 +67,23 @@ namespace DatabaseExtended.Tests
             Assert.Throws<InvalidOperationException>(() => database.Add(new Person(10, "kiko")));
         }
         [Test]
+        public void CaseSensitiveThrow()
+        {
+            var notExpectedResult = "kIko";
+            var actualResult = this.database.FindByUsername("kiko").UserName;
+
+            Assert.That(actualResult, Is.Not.EqualTo(notExpectedResult));
+            
+           
+        }
+        [Test]
+        [TestCase("Kiro")]
+        [TestCase("Paul")]
+        public void DatabaseFindByUsernameMethodShouldThrowExceptionIfUsernameIsNotFound(string username)
+        {
+            Assert.Throws<InvalidOperationException>(() => this.database.FindByUsername(username));
+        }
+        [Test]
         public void RemoveMethodWorkCorrectly()
         {
             database.Remove();
@@ -96,13 +114,7 @@ namespace DatabaseExtended.Tests
 
             Assert.Throws<InvalidOperationException>(() => database.Remove());
         }
-        public void DatabaseFindByUsernameMethodShouldBeCaseSensitive()
-        {
-            var notExpectedResult = "peShO";
-            var actualResult = this.database.FindByUsername("Pesho").UserName;
-
-            Assert.That(actualResult, Is.Not.EqualTo(notExpectedResult));
-        }
+     
 
         [Test]
         public void FindByUsernameCorrectly()
