@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using System.Xml.Linq;
 
 namespace Handball.Models
-{//88/150
+{
     public class Team : ITeam
     {
         private string name;
@@ -47,8 +47,8 @@ namespace Handball.Models
         {
             //The Draw() method increases the PointsEarned property by 1 point.
             //It also increases the rating of the goalkeeper player competing for the team. Each team will always have only one goalkeeper filed.
-            pointsEarned++;
-            Players.First(x => x.Name == nameof(Goalkeeper)).IncreaseRating();
+            pointsEarned+=1;
+            Players.First(x => x.GetType().Name == nameof(Goalkeeper)).IncreaseRating();
         }
 
         public void Lose()
