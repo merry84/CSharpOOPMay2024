@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace Handball.Core
 {
-    //123/150
+    //132/150
     public class Controller : IController
     {
         private IRepository<IPlayer> players;
@@ -43,22 +43,27 @@ namespace Handball.Core
           •	Return the following message to confirm the successful signing of the contract: "Player {playerName} signed a contract with {teamName}."
           */
             if (!players.ExistsModel(playerName))
-            {
-                return string.Format(OutputMessages.PlayerNotExisting, playerName, nameof(PlayerRepository));
-            }
-            if (!teams.ExistsModel(teamName))
-            {
-                return string.Format(OutputMessages.TeamNotExisting, teamName, nameof(TeamRepository));
-            }
-            IPlayer player = players.GetModel(playerName);
-            ITeam team = teams.GetModel(teamName);
-            if (player.Team != default)
-            {
-                return string.Format(OutputMessages.PlayerAlreadySignedContract, playerName, teamName);
-            }
-            player.JoinTeam(playerName);
-            team.SignContract(player);
-            return string.Format(OutputMessages.SignContract, playerName, teamName);
+               {
+                   return string.Format(OutputMessages.PlayerNotExisting, playerName, players.GetType().Name);
+               }
+               
+               if (!teams.ExistsModel(teamName))
+               {
+                   return string.Format(OutputMessages.TeamNotExisting, teamName, teams.GetType().Name);
+               }
+               
+               IPlayer player = players.GetModel(playerName);
+               
+               if (player.Team != null)
+               {
+                   return string.Format(OutputMessages.PlayerAlreadySignedContract, playerName, player.Team);
+               }
+               
+               player.JoinTeam(teamName);
+               
+               ITeam team = teams.Models.First(t => t.Name == teamName);
+               team.SignContract(player);
+               return string.Format(OutputMessages.SignContract, playerName, teamName);
         }
 
         public string NewGame(string firstTeamName, string secondTeamName)//Sequence contains no matching element
