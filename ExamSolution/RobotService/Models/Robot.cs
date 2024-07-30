@@ -117,13 +117,13 @@ namespace RobotService.Models
             sb.AppendLine($"--Maximum battery capacity: {BatteryCapacity}");
             sb.AppendLine($"--Current battery level: {BatteryLevel}");
             sb.Append("--Supplements installed: ");
-            if (InterfaceStandards.Count == 0)
+            if (interfaceStandards.Count == 0)
             {
                 sb.Append("none");
             }
             else 
             {
-                sb.Append(string.Join(" ",InterfaceStandards));
+                sb.Append(string.Join(" ",interfaceStandards));
             }
             return sb.ToString().TrimEnd();
         }

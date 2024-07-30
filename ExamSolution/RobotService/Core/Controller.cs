@@ -11,11 +11,12 @@ using System.Threading.Tasks;
 
 namespace RobotService.Core
 {
+    //140/150
     public class Controller : IController
     {
         //supplements - SupplementRepository
         // robots - RobotRepository
-        private  SupplementRepository supplements;
+        private SupplementRepository supplements;
         private RobotRepository robots;
 
         public Controller()
@@ -31,7 +32,7 @@ namespace RobotService.Core
              If the above case is NOT reached, create an IRobot from the valid child type and add it to the
             RobotRepository. Return the following message: "{typeName} {model} is created and added
             to the RobotRepository."  */
-            if(typeName != nameof(DomesticAssistant) && typeName != nameof(IndustrialAssistant))
+            if (typeName != nameof(DomesticAssistant) && typeName != nameof(IndustrialAssistant))
             {
                 return string.Format(OutputMessages.RobotCannotBeCreated, typeName);
             }
@@ -42,7 +43,7 @@ namespace RobotService.Core
             }
             else { robot = new IndustrialAssistant(model); }
             robots.AddNew(robot);
-            return string.Format(OutputMessages.RobotCreatedSuccessfully, typeName,model);
+            return string.Format(OutputMessages.RobotCreatedSuccessfully, typeName, model);
         }
 
         public string CreateSupplement(string typeName)
@@ -56,11 +57,11 @@ namespace RobotService.Core
             SupplementRepository."
             */
             ISupplement supplement;
-            if(typeName == nameof(SpecializedArm))
+            if (typeName == nameof(SpecializedArm))
             {
                 supplement = new SpecializedArm();
             }
-            else if(typeName == nameof(LaserRadar))
+            else if (typeName == nameof(LaserRadar))
             {
                 supplement = new LaserRadar();
             }
@@ -75,25 +76,25 @@ namespace RobotService.Core
 
         public string PerformService(string serviceName, int intefaceStandard, int totalPowerNeeded)
         {
-           
-            var robotFiltred =robots.Models()
-                .Where(x=>x.InterfaceStandards.Any(y=>y == intefaceStandard))
-                .OrderByDescending(y=>y.BatteryLevel);
-            if (robotFiltred.Count() == 0) 
+
+            var robotFiltred = robots.Models()
+                .Where(x => x.InterfaceStandards.Any(y => y == intefaceStandard))
+                .OrderByDescending(y => y.BatteryLevel);
+            if (robotFiltred.Count() == 0)
             {
                 return string.Format(OutputMessages.UnableToPerform, intefaceStandard);
             }
-            var sumBatteryLevel = robotFiltred.Sum(x=>x.BatteryLevel);
+            var sumBatteryLevel = robotFiltred.Sum(x => x.BatteryLevel);
 
             if (sumBatteryLevel < totalPowerNeeded)
             {
-                return string.Format(OutputMessages.UnableToPerform,serviceName,totalPowerNeeded-sumBatteryLevel);
+                return string.Format(OutputMessages.MorePowerNeeded, serviceName, totalPowerNeeded - sumBatteryLevel);
             }
-           int countRobots = 0;
-            foreach ( var robot in robotFiltred)
+            int countRobots = 0;
+            foreach (var robot in robotFiltred)
             {
                 countRobots++;
-                if(robot.BatteryLevel>= totalPowerNeeded)
+                if (robot.BatteryLevel >= totalPowerNeeded)
                 {
                     robot.ExecuteService(totalPowerNeeded);
                     break;
@@ -119,10 +120,10 @@ namespace RobotService.Core
           {robot2}
           ...
           {robotn}"*/
-            var selectedRobots = robots.Models().OrderByDescending(x=>x.BatteryLevel)
-                .ThenBy(x=>x.BatteryCapacity);
+            var selectedRobots = robots.Models().OrderByDescending(x => x.BatteryLevel)
+                .ThenBy(x => x.BatteryCapacity);
             var sb = new StringBuilder();
-            foreach (var robot in selectedRobots) 
+            foreach (var robot in selectedRobots)
             {
                 sb.AppendLine(robot.ToString());
             }
@@ -141,12 +142,12 @@ namespace RobotService.Core
             var selectetRobots = robots.Models().Where(x => x.Model == model && x.BatteryLevel * 2 < x.BatteryCapacity);
             int fedCount = 0;
 
-            foreach (var robot in selectetRobots) 
+            foreach (var robot in selectetRobots)
             {
                 robot.Eating(minutes);
                 fedCount++;
             }
-            return string.Format(OutputMessages.RobotsFed,fedCount);
+            return string.Format(OutputMessages.RobotsFed, fedCount);
         }
 
         public string UpgradeRobot(string model, string supplementTypeName)
@@ -173,18 +174,10 @@ namespace RobotService.Core
             var stillNotUpgraded = selectedModels.Where(r => r.InterfaceStandards.All(s => s != supplement.InterfaceStandard));
             var robotForUpgrade = stillNotUpgraded.FirstOrDefault();
 
-            if (robotForUpgrade != null)
-            {
-                robotForUpgrade.InstallSupplement(supplement);
-                robots.RemoveByName(supplementTypeName);
-                return string.Format(OutputMessages.UpgradeSuccessful, model,supplementTypeName);
-            }
-            else
-            {
-                return string.Format(OutputMessages.AllModelsUpgraded, supplementTypeName);
-            }
-
-
+            if (robotForUpgrade == null) return string.Format(OutputMessages.AllModelsUpgraded, model);
+            robotForUpgrade.InstallSupplement(supplement);
+            robots.RemoveByName(supplementTypeName);
+            return string.Format(OutputMessages.UpgradeSuccessful, model, supplementTypeName);
 
         }
     }
