@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace Handball.Core
 {
-    //88/150
+    //123/150
     public class Controller : IController
     {
         private IRepository<IPlayer> players;
@@ -52,7 +52,7 @@ namespace Handball.Core
             }
             IPlayer player = players.GetModel(playerName);
             ITeam team = teams.GetModel(teamName);
-            if (player.Team != null)
+            if (player.Team != default)
             {
                 return string.Format(OutputMessages.PlayerAlreadySignedContract, playerName, teamName);
             }

@@ -23,7 +23,7 @@ namespace TheContentDepartment.Models
             }
         }
         public override string ToString()
-       => $"{Name} ({GetType().Name}) – Currently working on {InProgress.Count} tasks.";
+       => $"{Name} ({GetType().Name}) - Currently working on {InProgress.Count} tasks.";
  //return $"{Name} ({GetType().Name}) - Currently working on {InProgress.Count} tasks.";
     }
 }
