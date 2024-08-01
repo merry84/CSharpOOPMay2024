@@ -13,7 +13,7 @@ namespace UniversityCompetition.Core
 {
     public class Controller : IController
     {
-
+       // 120/150
         /*•	subjects – SubjectRepository
            •	students – StudentRepository
            •	universities - UniversityRepository
