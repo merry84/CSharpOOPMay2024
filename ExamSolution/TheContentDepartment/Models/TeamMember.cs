@@ -16,7 +16,7 @@ namespace TheContentDepartment.Models
             */
         private string name;
         private string path;
-        private List<string> inProgress;
+        private readonly List<string> inProgress;
 
         protected TeamMember(string name, string path)
         {

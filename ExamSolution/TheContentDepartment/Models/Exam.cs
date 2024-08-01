@@ -8,9 +8,9 @@ namespace TheContentDepartment.Models
 {
     public class Exam : Resource
     {
-        private const int level = 1;
+        private const int Level = 1;
         public Exam(string name, string creator)
-            : base(name, creator, level)
+            : base(name, creator, Level)
         {
         }
     }

@@ -18,8 +18,8 @@ namespace TheContentDepartment.Core
     {
         //•	resources - ResourceRepository
         //•	members - MemberRepository
-        private IRepository<IResource> resources;
-        private IRepository<ITeamMember> members;
+        private readonly IRepository<IResource> resources;
+        private readonly IRepository<ITeamMember> members;
         public Controller()
         {
             resources = new ResourceRepository();
@@ -31,12 +31,13 @@ namespace TheContentDepartment.Core
 
             IResource resource = resources.TakeOne(resourceName);
 
-            if (resource.IsTested== false)
+            if (resource.IsTested == false)
             {
                 return string.Format(OutputMessages.ResourceNotTested, resourceName);
             }
 
-            ITeamMember teamLead = members.Models.FirstOrDefault(m => m.GetType().Name == nameof(TeamLead));
+            ITeamMember teamLead = members.Models
+                .FirstOrDefault(m => m.GetType().Name == nameof(TeamLead));
 
             if (isApprovedByTeamLead)
             {
@@ -47,7 +48,7 @@ namespace TheContentDepartment.Core
             else
             {
                 resource.Test();
-                return string.Format(OutputMessages.ResourceReturned, teamLead!.Name, resource.Name);
+                return string.Format(OutputMessages.ResourceReturned, teamLead.Name, resource.Name);
             }
 
 
@@ -56,13 +57,15 @@ namespace TheContentDepartment.Core
         public string CreateResource(string resourceType, string resourceName, string path)
         {
 
-            if(resourceType != nameof(Exam) && resourceType != nameof(Workshop) && resourceType != nameof(Presentation))
+            if (resourceType != nameof(Exam)
+               && resourceType != nameof(Workshop)
+               && resourceType != nameof(Presentation))
             {
                 return string.Format(OutputMessages.ResourceTypeInvalid, resourceType);
             }
             ITeamMember teamMember = members.Models.FirstOrDefault(x => x.Path == path);
 
-            if(teamMember == null)
+            if (teamMember == null)
             {
                 return string.Format(OutputMessages.NoContentMemberAvailable, resourceName);
             }
@@ -72,11 +75,11 @@ namespace TheContentDepartment.Core
             }
 
             IResource resource;
-            if(resourceType == nameof(Exam))
+            if (resourceType == nameof(Exam))
             {
                 resource = new Exam(resourceName, teamMember.Name);
             }
-            else if(resourceType == nameof(Workshop))
+            else if (resourceType == nameof(Workshop))
             {
                 resource = new Workshop(resourceName, teamMember.Name);
             }
@@ -84,58 +87,58 @@ namespace TheContentDepartment.Core
             {
                 resource = new Presentation(resourceName, teamMember.Name);
             }
-            resources.Add(resource);
             teamMember.WorkOnTask(resourceName);
+            resources.Add(resource);
 
 
-            return string.Format(OutputMessages.ResourceCreatedSuccessfully, teamMember.Name,resource.GetType().Name,resourceName);
+            return string.Format(OutputMessages.ResourceCreatedSuccessfully, teamMember.Name, resource.GetType().Name, resourceName);
         }
 
         public string DepartmentReport()
         {
 
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
 
             sb.AppendLine($"Finished Tasks:");
 
             foreach (var resource in resources.Models.Where(m => m.IsApproved))
             {
-                sb.AppendLine($"--{resource.ToString()}");
+                sb.AppendLine($"--{resource}");
             }
 
             sb.AppendLine($"Team Report:");
 
             ITeamMember teamLead = members.Models.FirstOrDefault(m => m.GetType().Name == nameof(TeamLead));
 
-            sb.AppendLine($"--{teamLead!.ToString()}");
+            sb.AppendLine($"--{teamLead}");
 
             foreach (var member in members.Models.Where(m => m.GetType().Name != nameof(TeamLead)))
             {
-                sb.AppendLine($"{member.ToString()}");
+                sb.AppendLine($"{member}");
             }
 
             return sb.ToString().TrimEnd();
         }
-        
+
         public string JoinTeam(string memberType, string memberName, string path)
-        {            
-         
+        {
+
             if (memberType != nameof(TeamLead) && memberType != nameof(ContentMember))
             {
                 return string.Format(OutputMessages.MemberTypeInvalid, memberType);
             }
-            if(members.Models.Any(x=>x.Path == path))
+            if (members.Models.Any(x => x.Path == path))
             {
                 return string.Format(OutputMessages.PositionOccupied);
             }
-            if(members.Models.Any(x=>x.Name == memberName))
+            if (members.Models.Any(x => x.Name == memberName))
             {
                 return string.Format(OutputMessages.MemberExists, memberName);
             }
             ITeamMember teamMember;
-            if(memberType ==  nameof(ContentMember))
+            if (memberType == nameof(ContentMember))
             {
-                teamMember = new ContentMember(memberName,path);
+                teamMember = new ContentMember(memberName, path);
             }
             else
             {
@@ -144,33 +147,36 @@ namespace TheContentDepartment.Core
             members.Add(teamMember);
             return string.Format(OutputMessages.MemberJoinedSuccessfully, memberName);
         }
+
         //!!??
         public string LogTesting(string memberName)
         {
-            
+
             ITeamMember teamMember = members.TakeOne(memberName);
-            if(teamMember == null)
+            if (teamMember == null)
             {
                 return string.Format(OutputMessages.WrongMemberName);
             }
-            IResource resource = resources.Models.Where(x=>x.Creator == teamMember.Name)
-                .Where(x=>x.IsTested == false)
-                .OrderBy(x=>x.Priority).FirstOrDefault();
+            IResource resource = resources.Models
+                .Where(x => x.Creator == teamMember.Name && x.IsTested == false)
+                .OrderBy(x => x.Priority).FirstOrDefault();
 
 
-            if(resource == null)
+            if (resource == null)
             {
                 return string.Format(OutputMessages.NoResourcesForMember, memberName);
             }
             //The method identifies the TeamLead from the repository of members.
-            ITeamMember teamLead = members.Models.FirstOrDefault(x => x.GetType().Name == nameof(TeamLead));
+            ITeamMember teamLead = members.Models
+                .FirstOrDefault(x => x.GetType().Name == nameof(TeamLead));
+
             //Resourcee is marked as tested.
-            resource!.Test();
             //The creator finishes working on the resource and passes it to the TeamLead. 
             //The resource name is excluded from the creator's InProgress collection
             //and added to the TeamLead's InProgress collection.
             teamMember.FinishTask(resource.Name);
-            teamLead!.WorkOnTask(resource.Name);
+            teamLead.WorkOnTask(resource.Name);
+            resource.Test();
 
             return string.Format(OutputMessages.ResourceTested, resource.Name);
         }
