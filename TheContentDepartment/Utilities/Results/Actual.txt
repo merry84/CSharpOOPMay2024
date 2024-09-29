@@ -1,0 +1,38 @@
+YokoYong has joined the team. Welcome!
+Position is occupied.
+Position is occupied.
+Position is occupied.
+Position is occupied.
+Presentation type is not handled by Content Department.
+Position is occupied.
+TrainingMember is not a valid member type.
+Position is occupied.
+Lab type is not handled by Content Department.
+Exam type is not handled by Content Department.
+Workshop type is not handled by Content Department.
+Exam type is not handled by Content Department.
+Exam type is not handled by Content Department.
+Exam type is not handled by Content Department.
+VideoContent type is not handled by Content Department.
+Exam type is not handled by Content Department.
+WorkShop type is not handled by Content Department.
+Presentation type is not handled by Content Department.
+Exam type is not handled by Content Department.
+DenisPeters has no resources for testing.
+ValGendor has no resources for testing.
+ValGendor has no resources for testing.
+ValGendor has no resources for testing.
+DannyDavis has no resources for testing.
+PeterSully has no resources for testing.
+PeterSully has no resources for testing.
+KrissThompson has no resources for testing.
+JavaOOP-Regular cannot be approved without being tested.
+JavaOOP-Retake cannot be approved without being tested.
+Inheritance cannot be approved without being tested.
+C#OOP-Regular cannot be approved without being tested.
+TicTacToe cannot be approved without being tested.
+JavaScriptOOP-Retake cannot be approved without being tested.
+Finished Tasks:
+Team Report:
+--ContentMember (TeamLead) - Currently working on 0 tasks.
+YokoYong -  path. Currently working on 0 tasks.
